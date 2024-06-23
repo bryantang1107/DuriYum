@@ -22,6 +22,26 @@ func main() {
 		})
 	})
 
+	//login - public
+
+	//signup - public 
+	//store fname/lname, email, pw
+
+	//checkout - private
+	//array boxed/whole indicator, quantity, durian_id 
+	
+	//get all durian - public 
+	//allow superadmin to amend prices
+
+	//add to cart - local storage
+
+	//contact us - public
+	//user id, message, name, email, hp
+	//send to superadmin email
+
+	
+
+
+
 	r.Run(":10500")
-	fmt.Print("hello")
 }
