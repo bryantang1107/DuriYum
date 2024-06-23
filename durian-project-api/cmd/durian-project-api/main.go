@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 
@@ -37,10 +36,7 @@ func main() {
 
 	//contact us - public
 	//user id, message, name, email, hp
-	//send to superadmin email
-
-	
-
+	//send to superadmin email s
 
 
 	r.Run(":10500")
