@@ -4,6 +4,8 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Nav from "./components/Nav";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 import PrivateRoute from "./routes/PrivateRoutes";
 import { useAuth } from "./context/AuthContext";
 
@@ -19,6 +21,8 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/" element={<Home />}></Route>
+          <Route path="/signIn" element={<SignIn />}></Route>
+          <Route path="/signUp" element={<SignUp />}></Route>
           {/* Private Routes */}
           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             <Route path="/checkout" element={<Home />} />

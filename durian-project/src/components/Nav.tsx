@@ -16,8 +16,8 @@ const Nav = () => {
         </div>
       </div>
       <div className="col-span-1 bg-blue-300 flex justify-between">
-        <h1>Profile</h1>
         <h1>Cart</h1>
+        <h1>Profile</h1>
       </div>
     </div>
   );
