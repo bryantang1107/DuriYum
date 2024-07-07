@@ -7,12 +7,13 @@ import Nav from "./components/Nav";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PrivateRoute from "./routes/PrivateRoutes";
+import Footer from "./components/Footer";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
   const { isAuthenticated } = useAuth();
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <Router>
         <Nav></Nav>
         <Routes>
@@ -28,8 +29,9 @@ function App() {
             <Route path="/checkout" element={<Home />} />
           </Route>
         </Routes>
+        <Footer></Footer>
       </Router>
-    </>
+    </div>
   );
 }
 

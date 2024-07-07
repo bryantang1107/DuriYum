@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Nav = () => {
   return (
-    <div className="sticky top-0 left-0 right-0 grid grid-cols-5 gap-4 bg-gray-600 p-4">
+    <div className="sticky top-0 h-16 grid grid-cols-5 gap-4 bg-gray-600 p-4">
       <div className="col-span-1 bg-red-400">
         <h1>Logo</h1>
       </div>
