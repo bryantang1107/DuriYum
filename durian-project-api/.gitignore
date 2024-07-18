@@ -1,0 +1,3 @@
+/tmp/tmux-client-*
+/tmp/tmux-server-*
+.env
