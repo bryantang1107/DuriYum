@@ -1,11 +1,21 @@
 package main
 
 import (
+	"log"
+
 	"github.com/bryantang1107/Jom-Fresh/config"
 	"github.com/bryantang1107/Jom-Fresh/middleware"
 	"github.com/bryantang1107/Jom-Fresh/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func main() {
 	r := gin.Default()
@@ -21,16 +31,8 @@ func main() {
 		})
 	})
 
-	// login - public
-
-	// signup - public
-	// store fname/lname, email, pw
-
 	// checkout - private
 	// array boxed/whole indicator, quantity, durian_id
-
-	// get all durian - public
-	// allow superadmin to amend prices
 
 	// add to cart - local storage
 
@@ -38,5 +40,5 @@ func main() {
 	// user id, message, name, email, hp
 	// send to superadmin email s
 
-	r.Run(":10500")
+	r.Run()
 }
