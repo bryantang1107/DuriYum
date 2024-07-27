@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	gorm.Model
-	ID       string  `gorm:"primaryKey" json:"id"`
+	Id       string  `gorm:"primaryKey" json:"id"`
 	Name     string  `json:"name"`
 	Email    string  `json:"email"`
 	Phone    int     `json:"phone"`
@@ -14,6 +14,6 @@ type User struct {
 	Street   string  `json:"street"`
 	City     string  `json:"city"`
 	State    string  `json:"state"`
-	PostCode int     `json:"post_code"`
+	PostCode int     `json:"postcode"`
 	Orders   []Order `gorm:"foreignKey:UserID" json:"orders"` // One-to-many relationship
 }

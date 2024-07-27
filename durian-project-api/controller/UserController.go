@@ -13,11 +13,11 @@ import (
 func GetUser(c *gin.Context) {
 	id := c.Param("id")
 
-	var users models.User
+	var users []models.User
 	conditions := map[string]interface{}{"id": id}
 	err := dbutils.Select(&users, conditions)
 	if err != nil {
-		utils.HandleErrorResponse(c, http.StatusNotFound, "User Profile Not Found", nil)
+		utils.HandleErrorResponse(c, http.StatusNotFound, "User Profile Not Found", err)
 		return
 	}
 
@@ -25,9 +25,16 @@ func GetUser(c *gin.Context) {
 }
 
 func AddUser(c *gin.Context) {
-	user, err := dbutils.Insert(&models.User{}, c)
+	var user models.User
+	if err := c.BindJSON(&user); err != nil {
+		utils.WriteLog(err, "ERROR")
+		return
+	}
+
+	err := dbutils.Insert(&user)
 	if err != nil {
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "User Profile Cannot be Created", err)
+		return
 	}
 	c.IndentedJSON(http.StatusOK, user)
 }
@@ -35,18 +42,18 @@ func AddUser(c *gin.Context) {
 func EditUser(c *gin.Context) {
 	id := c.Param("id")
 
-	whereClause := map[string]interface{}{"id": id}
-	err := dbutils.Select(&[]models.User{}, whereClause)
-	if err != nil {
-		utils.HandleErrorResponse(c, http.StatusNotFound, "User Profile Not Found", err)
-		return
-	}
+	conditions := map[string]interface{}{"id": id}
 
 	var user models.User
-	if err := c.BindJSON(user); err != nil {
+	if err := c.BindJSON(&user); err != nil {
 		return
 	}
 
-	config.DB.Model(&user).Updates(&user)
+	err := dbutils.Update(models.User{}, &user, conditions)
+	if err != nil {
+		utils.HandleErrorResponse(c, http.StatusInternalServerError, "User Profile Cannot be Edited", err)
+		return
+	}
+
 	c.IndentedJSON(http.StatusOK, user)
 }

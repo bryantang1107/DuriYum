@@ -4,10 +4,10 @@ import (
 	"errors"
 	"reflect"
 	"strconv"
+	"time"
 
 	"github.com/bryantang1107/Jom-Fresh/config"
 	"github.com/bryantang1107/Jom-Fresh/utils"
-	"github.com/gin-gonic/gin"
 )
 
 func Select(model interface{}, conditions map[string]interface{}) error {
@@ -16,27 +16,75 @@ func Select(model interface{}, conditions map[string]interface{}) error {
 		return errors.New("model must be a pointer to a slice")
 	}
 
-	query := config.DB.Where(conditions)
+	query := config.DB
 
-	if err := query.Find(model).Error; err != nil {
-		return err
+	for key, value := range conditions {
+		query = query.Where(key, value)
 	}
+
+	start := time.Now()
+	utils.WriteLog("DB Query [S]", "INFO")
+	result := query.First(model)
+	utils.WriteLog("DB Query [E]", "INFO")
+	duration := time.Since(start)
+	utils.WriteLog("Operation took :: "+duration.String(), "INFO")
+
+	if result.Error != nil {
+		utils.WriteLog(result.Error, "ERROR")
+		return result.Error
+	}
+
+	utils.WriteLog("Number of rows affected : "+strconv.Itoa(int(result.RowsAffected)), "INFO")
 
 	return nil
 }
 
-func Insert(model interface{}, c *gin.Context) (interface{}, error) {
-	results := reflect.New(reflect.SliceOf(reflect.TypeOf(model).Elem())).Interface()
-	if err := c.BindJSON(results); err != nil {
-		return nil, err
+func Insert(model interface{}) error {
+	modelValue := reflect.ValueOf(model)
+	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
+		return errors.New("model must be a pointer to a slice")
 	}
-	utils.WriteLog("Insert [S]", "INFO")
-	result := config.DB.Create(results)
-	utils.WriteLog("Insert [E]", "INFO")
+
+	start := time.Now()
+	utils.WriteLog("DB Query [S]", "INFO")
+	result := config.DB.Create(model)
+	utils.WriteLog("DB Query [E]", "INFO")
+	duration := time.Since(start)
+	utils.WriteLog("Operation took :: "+duration.String(), "INFO")
+
 	if result.Error != nil {
-		return nil, result.Error
+		utils.WriteLog(result.Error, "ERROR")
+		return result.Error
 	}
 
 	utils.WriteLog("Number of rows affected : "+strconv.Itoa(int(result.RowsAffected)), "INFO")
-	return model, nil
+	return nil
+}
+
+func Update(model interface{}, updateModel interface{}, conditions map[string]interface{}) error {
+	modelValue := reflect.ValueOf(model)
+	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Slice {
+		return errors.New("model must be a pointer to a slice")
+	}
+
+	query := config.DB
+
+	for key, value := range conditions {
+		query.Where(key+" = ? ", value)
+	}
+
+	start := time.Now()
+	utils.WriteLog("DB Query [S]", "INFO")
+	result := query.Model(model).Updates(updateModel)
+	utils.WriteLog("DB Query [E]", "INFO")
+	duration := time.Since(start)
+	utils.WriteLog("Operation took :: "+duration.String(), "INFO")
+
+	if result.Error != nil {
+		utils.WriteLog(result.Error, "ERROR")
+		return result.Error
+	}
+
+	utils.WriteLog("Number of rows affected : "+strconv.Itoa(int(result.RowsAffected)), "INFO")
+	return nil
 }

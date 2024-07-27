@@ -1,13 +1,14 @@
 package utils
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
 
-func WriteLog(message string, msgTyp string) {
-	log.Output(1, "[ "+msgTyp+" ] :: "+message)
+func WriteLog(message interface{}, msgTyp string) {
+	formattedMessage := fmt.Sprintf("%v", message)
+	fmt.Println("[ " + msgTyp + " ] :: " + formattedMessage)
 }
 
 func HandleErrorResponse(c *gin.Context, status int, message string, err error) {
