@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/bryantang1107/Jom-Fresh/config"
-	"github.com/bryantang1107/Jom-Fresh/middleware"
-	"github.com/bryantang1107/Jom-Fresh/routes"
+	"github.com/bryantang1107/DuriYum/config"
+	"github.com/bryantang1107/DuriYum/middleware"
+	"github.com/bryantang1107/DuriYum/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -24,12 +24,10 @@ func main() {
 	config.Connect()
 
 	r.Use(middleware.CORSMiddleware())
+	// register route
 	routes.UserRoute(r)
-	r.GET("/ping", func(c *gin.Context) {
-		c.IndentedJSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	routes.PostRoute(r)
+	routes.DurianRoute(r)
 
 	// checkout - private
 	// array boxed/whole indicator, quantity, durian_id

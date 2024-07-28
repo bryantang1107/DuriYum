@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/bryantang1107/Jom-Fresh/models"
+	"github.com/bryantang1107/DuriYum/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -30,7 +30,7 @@ func Connect() {
 		panic(err)
 	}
 	// Clear existing tables if needed (Be cautious with this in production)
-	// db.Migrator().DropTable(&models.OrderItem{}, &models.Order{}, &models.User{}, &models.Durian{})
+	// db.Migrator().DropTable(&models.OrderItem{}, &models.Order{}, &models.User{}, &models.Durian{}, &models.Post{})
 
 	// Perform migrations in the recommended order
 	err = db.AutoMigrate(&models.Durian{})
@@ -52,5 +52,11 @@ func Connect() {
 	if err != nil {
 		log.Fatalf("failed to migrate OrderItem: %v", err)
 	}
+
+	err = db.AutoMigrate(&models.Post{})
+	if err != nil {
+		log.Fatalf("failed to migrate Post: %v", err)
+	}
+
 	DB = db
 }

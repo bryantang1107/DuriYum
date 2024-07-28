@@ -1,4 +1,4 @@
-module github.com/bryantang1107/Jom-Fresh
+module github.com/bryantang1107/DuriYum
 
 go 1.22.5
 

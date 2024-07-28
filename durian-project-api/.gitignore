@@ -1,6 +1,6 @@
 /tmux-client-*
 /tmux-server-*
-/data
+/data/db/
 .env
 /Jom-Fresh
 

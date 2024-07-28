@@ -3,10 +3,9 @@ package controller
 import (
 	"net/http"
 
-	"github.com/bryantang1107/Jom-Fresh/config"
-	"github.com/bryantang1107/Jom-Fresh/dbutils"
-	"github.com/bryantang1107/Jom-Fresh/models"
-	"github.com/bryantang1107/Jom-Fresh/utils"
+	"github.com/bryantang1107/DuriYum/dbutils"
+	"github.com/bryantang1107/DuriYum/models"
+	"github.com/bryantang1107/DuriYum/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +14,7 @@ func GetUser(c *gin.Context) {
 
 	var users []models.User
 	conditions := map[string]interface{}{"id": id}
-	err := dbutils.Select(&users, conditions)
+	err := dbutils.SelectOne(&users, conditions)
 	if err != nil {
 		utils.HandleErrorResponse(c, http.StatusNotFound, "User Profile Not Found", err)
 		return
@@ -42,14 +41,27 @@ func AddUser(c *gin.Context) {
 func EditUser(c *gin.Context) {
 	id := c.Param("id")
 
-	conditions := map[string]interface{}{"id": id}
-
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
+		utils.WriteLog(err, "ERROR")
 		return
 	}
+	updates := map[string]interface{}{
+		"name":     user.Name,
+		"email":    user.Email,
+		"phone":    user.Phone,
+		"unit":     user.Unit,
+		"street":   user.Street,
+		"city":     user.City,
+		"state":    user.State,
+		"postcode": user.PostCode,
+		"id":       user.ID,
+	}
 
-	err := dbutils.Update(models.User{}, &user, conditions)
+	conditions := map[string]interface{}{
+		"id": id,
+	}
+	err := dbutils.Update(&models.Durian{}, updates, conditions)
 	if err != nil {
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "User Profile Cannot be Edited", err)
 		return

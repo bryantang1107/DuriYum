@@ -15,5 +15,6 @@ type User struct {
 	City     string  `json:"city"`
 	State    string  `json:"state"`
 	PostCode int     `json:"postcode"`
+	Role     string  `json:"role"`
 	Orders   []Order `gorm:"foreignKey:UserID" json:"orders"` // One-to-many relationship
 }

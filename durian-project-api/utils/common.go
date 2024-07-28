@@ -14,6 +14,6 @@ func WriteLog(message interface{}, msgTyp string) {
 func HandleErrorResponse(c *gin.Context, status int, message string, err error) {
 	c.IndentedJSON(status, gin.H{
 		"message": message,
-		"error":   err,
+		"error":   err.Error(),
 	})
 }

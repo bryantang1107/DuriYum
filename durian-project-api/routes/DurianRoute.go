@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/bryantang1107/Jom-Fresh/controller"
+	"github.com/bryantang1107/DuriYum/controller"
 	"github.com/gin-gonic/gin"
 )
 
