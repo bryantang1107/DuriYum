@@ -13,7 +13,7 @@ func GetAllDurians(c *gin.Context) {
 	var durian []models.Durian
 
 	// sort by availability
-	err := dbutils.Select(&durian, nil)
+	err := dbutils.Select(&durian, nil, "")
 	if err != nil {
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "Internal Server Error", err)
 		return
@@ -26,7 +26,7 @@ func AddDurian(c *gin.Context) {
 	var durian models.Durian
 
 	if err := c.BindJSON(&durian); err != nil {
-		utils.WriteLog(err, "ERROR")
+		utils.WriteLog(err.Error(), "ERROR")
 		return
 	}
 
@@ -44,7 +44,7 @@ func EditDurian(c *gin.Context) {
 	var durian models.Durian
 
 	if err := c.BindJSON(&durian); err != nil {
-		utils.WriteLog(err, "ERROR")
+		utils.WriteLog(err.Error(), "ERROR")
 		return
 	}
 

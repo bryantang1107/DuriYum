@@ -28,6 +28,7 @@ func main() {
 	routes.UserRoute(r)
 	routes.PostRoute(r)
 	routes.DurianRoute(r)
+	routes.OrderRoute(r)
 
 	// checkout - private
 	// array boxed/whole indicator, quantity, durian_id

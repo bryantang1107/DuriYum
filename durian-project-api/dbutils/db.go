@@ -11,24 +11,63 @@ import (
 	"gorm.io/gorm"
 )
 
-func Select(model interface{}, conditions map[string]interface{}) error {
+func Select(model interface{}, conditions map[string]interface{}, order string) error {
 	modelValue := reflect.ValueOf(model)
 	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Slice {
 		return errors.New("model must be a pointer to a slice")
 	}
 
+	start := time.Now()
+
 	query := config.DB
+
+	if order != "" {
+		query = query.Order(order)
+	}
 
 	for key, value := range conditions {
 		query = query.Where(key, value)
 	}
 
-	start := time.Now()
-	utils.WriteLog("DB Query [S]", "INFO")
 	result := query.Find(model)
-	utils.WriteLog("DB Query [E]", "INFO")
 	duration := time.Since(start)
-	utils.WriteLog("Operation took :: "+duration.String(), "INFO")
+
+	utils.WriteLog("DB Query completed in :: "+duration.String(), "INFO")
+
+	if result.Error != nil {
+		utils.WriteLog(result.Error, "ERROR")
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil
+		}
+		return result.Error
+	}
+
+	utils.WriteLog("Number of rows affected : "+strconv.Itoa(int(result.RowsAffected)), "INFO")
+
+	return nil
+}
+
+func PreLoad(model interface{}, childModel string, conditions map[string]interface{}, order string) error {
+	modelValue := reflect.ValueOf(model)
+	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Slice {
+		return errors.New("model must be a pointer to a slice")
+	}
+
+	start := time.Now()
+
+	query := config.DB
+
+	if order != "" {
+		query = query.Order(order)
+	}
+
+	for key, value := range conditions {
+		query = query.Where(key, value)
+	}
+
+	result := query.Preload(childModel).Find(model)
+	duration := time.Since(start)
+	utils.WriteLog("DB Query completed in :: "+duration.String(), "INFO")
 
 	if result.Error != nil {
 		utils.WriteLog(result.Error, "ERROR")

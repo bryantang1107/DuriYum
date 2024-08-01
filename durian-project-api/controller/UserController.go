@@ -26,7 +26,7 @@ func GetUser(c *gin.Context) {
 func AddUser(c *gin.Context) {
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
-		utils.WriteLog(err, "ERROR")
+		utils.WriteLog(err.Error(), "ERROR")
 		return
 	}
 
@@ -43,7 +43,7 @@ func EditUser(c *gin.Context) {
 
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
-		utils.WriteLog(err, "ERROR")
+		utils.WriteLog(err.Error(), "ERROR")
 		return
 	}
 	updates := map[string]interface{}{
