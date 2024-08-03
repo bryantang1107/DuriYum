@@ -8,13 +8,12 @@ import (
 
 	"github.com/bryantang1107/DuriYum/config"
 	"github.com/bryantang1107/DuriYum/utils"
-	"gorm.io/gorm"
 )
 
 func Select(model interface{}, conditions map[string]interface{}, order string) error {
 	modelValue := reflect.ValueOf(model)
-	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Slice {
-		return errors.New("model must be a pointer to a slice")
+	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
+		return errors.New("model must be a pointer to a struct")
 	}
 
 	start := time.Now()
@@ -36,9 +35,6 @@ func Select(model interface{}, conditions map[string]interface{}, order string) 
 
 	if result.Error != nil {
 		utils.WriteLog(result.Error, "ERROR")
-		if result.Error == gorm.ErrRecordNotFound {
-			return nil
-		}
 		return result.Error
 	}
 
@@ -49,8 +45,8 @@ func Select(model interface{}, conditions map[string]interface{}, order string) 
 
 func PreLoad(model interface{}, childModel string, conditions map[string]interface{}, order string) error {
 	modelValue := reflect.ValueOf(model)
-	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Slice {
-		return errors.New("model must be a pointer to a slice")
+	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
+		return errors.New("model must be a pointer to a struct")
 	}
 
 	start := time.Now()
@@ -71,9 +67,6 @@ func PreLoad(model interface{}, childModel string, conditions map[string]interfa
 
 	if result.Error != nil {
 		utils.WriteLog(result.Error, "ERROR")
-		if result.Error == gorm.ErrRecordNotFound {
-			return nil
-		}
 		return result.Error
 	}
 
@@ -84,8 +77,8 @@ func PreLoad(model interface{}, childModel string, conditions map[string]interfa
 
 func SelectOne(model interface{}, conditions map[string]interface{}) error {
 	modelValue := reflect.ValueOf(model)
-	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Slice {
-		return errors.New("model must be a pointer to a slice")
+	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
+		return errors.New("model must be a pointer to a struct")
 	}
 
 	query := config.DB

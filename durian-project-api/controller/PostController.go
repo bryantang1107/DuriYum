@@ -1,19 +1,25 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/bryantang1107/DuriYum/dbutils"
 	"github.com/bryantang1107/DuriYum/models"
 	"github.com/bryantang1107/DuriYum/utils"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetAllPosts(c *gin.Context) {
-	var posts []models.Post
+	var posts models.Post
 
 	err := dbutils.Select(&posts, nil, "created_at desc")
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.IndentedJSON(http.StatusOK, []interface{}{})
+			return
+		}
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "Internal Server Error", err)
 		return
 	}
@@ -24,10 +30,14 @@ func GetAllPosts(c *gin.Context) {
 func GetPost(c *gin.Context) {
 	id := c.Param("id")
 
-	var posts []models.Post
+	var posts models.Post
 	conditions := map[string]interface{}{"user_id": id}
 	err := dbutils.Select(&posts, conditions, "created_at desc")
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.IndentedJSON(http.StatusOK, []interface{}{})
+			return
+		}
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "Internal Server Error", err)
 		return
 	}

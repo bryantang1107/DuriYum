@@ -1,20 +1,26 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/bryantang1107/DuriYum/dbutils"
 	"github.com/bryantang1107/DuriYum/models"
 	"github.com/bryantang1107/DuriYum/utils"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetAllDurians(c *gin.Context) {
-	var durian []models.Durian
+	var durian models.Durian
 
 	// sort by availability
 	err := dbutils.Select(&durian, nil, "")
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.IndentedJSON(http.StatusOK, []interface{}{})
+			return
+		}
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "Internal Server Error", err)
 		return
 	}

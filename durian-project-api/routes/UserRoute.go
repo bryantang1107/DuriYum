@@ -8,5 +8,6 @@ import (
 func UserRoute(router *gin.Engine) {
 	router.GET("/user/:id", controller.GetUser)
 	router.POST("/user", controller.AddUser)
+	router.POST("/user/login", controller.UserLogin)
 	router.PUT("/user/:id", controller.EditUser)
 }

@@ -2,17 +2,20 @@ package controller
 
 import (
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/bryantang1107/DuriYum/dbutils"
 	"github.com/bryantang1107/DuriYum/models"
 	"github.com/bryantang1107/DuriYum/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func GetUser(c *gin.Context) {
 	id := c.Param("id")
 
-	var users []models.User
+	var users models.User
 	conditions := map[string]interface{}{"id": id}
 	err := dbutils.SelectOne(&users, conditions)
 	if err != nil {
@@ -68,4 +71,36 @@ func EditUser(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, user)
+}
+
+func UserLogin(c *gin.Context) {
+	user_id := c.Query("userId")
+
+	conditions := map[string]interface{}{
+		"id": user_id,
+	}
+	var user models.User
+	err := dbutils.SelectOne(&user, conditions)
+	if err != nil {
+		utils.HandleErrorResponse(c, http.StatusUnauthorized, "User Profile Not Found", err)
+		return
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": user_id,
+		"exp": time.Now().Add(time.Minute * 30).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		utils.HandleErrorResponse(c, http.StatusBadRequest, "Unable to generate JWT token", err)
+		return
+	}
+
+	// send it back as cookie
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("Authorization", tokenString, 60*30, "", "", false, true)
+	c.IndentedJSON(http.StatusOK, gin.H{})
+
+	// TODO:: middleware to validate jwt
 }
