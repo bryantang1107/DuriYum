@@ -13,17 +13,18 @@ import (
 )
 
 func GetUser(c *gin.Context) {
-	id := c.Param("id")
+	id, _ := c.Get("user")
 
-	var users models.User
-	conditions := map[string]interface{}{"id": id}
-	err := dbutils.SelectOne(&users, conditions)
-	if err != nil {
-		utils.HandleErrorResponse(c, http.StatusNotFound, "User Profile Not Found", err)
-		return
+	conditions := map[string]interface{}{
+		"id": id,
 	}
 
-	c.IndentedJSON(http.StatusOK, users)
+	var user models.User
+	if err := dbutils.SelectOne(&user, conditions); err != nil {
+		utils.HandleErrorResponse(c, http.StatusInternalServerError, "User Profile Cannot be Created", err)
+		return
+	}
+	c.IndentedJSON(http.StatusOK, user)
 }
 
 func AddUser(c *gin.Context) {
@@ -33,16 +34,16 @@ func AddUser(c *gin.Context) {
 		return
 	}
 
-	err := dbutils.Insert(&user)
-	if err != nil {
+	if err := dbutils.Insert(&user); err != nil {
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "User Profile Cannot be Created", err)
 		return
 	}
+
 	c.IndentedJSON(http.StatusOK, user)
 }
 
 func EditUser(c *gin.Context) {
-	id := c.Param("id")
+	id, _ := c.Get("user")
 
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
@@ -57,15 +58,14 @@ func EditUser(c *gin.Context) {
 		"street":   user.Street,
 		"city":     user.City,
 		"state":    user.State,
-		"postcode": user.PostCode,
-		"id":       user.ID,
+		"postcode": user.Postcode,
 	}
 
 	conditions := map[string]interface{}{
 		"id": id,
 	}
-	err := dbutils.Update(&models.Durian{}, updates, conditions)
-	if err != nil {
+
+	if err := dbutils.Update(&user, updates, conditions); err != nil {
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "User Profile Cannot be Edited", err)
 		return
 	}
@@ -80,8 +80,7 @@ func UserLogin(c *gin.Context) {
 		"id": user_id,
 	}
 	var user models.User
-	err := dbutils.SelectOne(&user, conditions)
-	if err != nil {
+	if err := dbutils.SelectOne(&user, conditions); err != nil {
 		utils.HandleErrorResponse(c, http.StatusUnauthorized, "User Profile Not Found", err)
 		return
 	}
@@ -101,6 +100,4 @@ func UserLogin(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", tokenString, 60*30, "", "", false, true)
 	c.IndentedJSON(http.StatusOK, gin.H{})
-
-	// TODO:: middleware to validate jwt
 }

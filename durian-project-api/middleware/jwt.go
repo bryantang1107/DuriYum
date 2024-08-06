@@ -60,7 +60,7 @@ func ValidateJWT(c *gin.Context) {
 			return
 		}
 
-		c.Set("user", user)
+		c.Set("user", user.Id)
 		c.Next()
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)

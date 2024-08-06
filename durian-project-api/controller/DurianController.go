@@ -1,26 +1,19 @@
 package controller
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/bryantang1107/DuriYum/dbutils"
 	"github.com/bryantang1107/DuriYum/models"
 	"github.com/bryantang1107/DuriYum/utils"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func GetAllDurians(c *gin.Context) {
-	var durian models.Durian
+	var durian []models.Durian
 
 	// sort by availability
-	err := dbutils.Select(&durian, nil, "")
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			c.IndentedJSON(http.StatusOK, []interface{}{})
-			return
-		}
+	if err := dbutils.Select(&durian, nil, ""); err != nil {
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "Internal Server Error", err)
 		return
 	}
@@ -66,7 +59,8 @@ func EditDurian(c *gin.Context) {
 		"id": id,
 	}
 
-	err := dbutils.Update(&models.Durian{}, updates, conditions)
+	// TODO:: handle unable to update record
+	err := dbutils.Update(&durian, updates, conditions)
 	if err != nil {
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "Unable to update durian record", err)
 		return
@@ -82,8 +76,7 @@ func DeleteDurian(c *gin.Context) {
 	conditions := map[string]interface{}{
 		"id": id,
 	}
-	err := dbutils.Delete(&durian, conditions)
-	if err != nil {
+	if err := dbutils.Delete(&durian, conditions); err != nil {
 		utils.HandleErrorResponse(c, http.StatusInternalServerError, "Unable to delete durian record", err)
 		return
 	}

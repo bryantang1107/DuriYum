@@ -8,9 +8,9 @@ import (
 
 func PostRoute(router *gin.Engine) {
 	// for Admin
-	router.GET("/post", controller.GetAllPosts)
+	router.GET("/all-post", middleware.ValidateJWT, controller.GetAllPosts)
 	// for User
-	router.GET("/post/:id", middleware.ValidateJWT, controller.GetPost)
+	router.GET("/post", middleware.ValidateJWT, controller.GetPost)
 	// for User
-	router.POST("/post", controller.CreatePost)
+	router.POST("/post", middleware.ValidateJWT, controller.CreatePost)
 }

@@ -1,7 +1,6 @@
 package dbutils
 
 import (
-	"errors"
 	"reflect"
 	"strconv"
 	"time"
@@ -11,9 +10,8 @@ import (
 )
 
 func Select(model interface{}, conditions map[string]interface{}, order string) error {
-	modelValue := reflect.ValueOf(model)
-	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
-		return errors.New("model must be a pointer to a struct")
+	if err := utils.CheckModel(model, reflect.Slice); err != nil {
+		return err
 	}
 
 	start := time.Now()
@@ -44,11 +42,9 @@ func Select(model interface{}, conditions map[string]interface{}, order string) 
 }
 
 func PreLoad(model interface{}, childModel string, conditions map[string]interface{}, order string) error {
-	modelValue := reflect.ValueOf(model)
-	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
-		return errors.New("model must be a pointer to a struct")
+	if err := utils.CheckModel(model, reflect.Struct); err != nil {
+		return err
 	}
-
 	start := time.Now()
 
 	query := config.DB
@@ -76,9 +72,8 @@ func PreLoad(model interface{}, childModel string, conditions map[string]interfa
 }
 
 func SelectOne(model interface{}, conditions map[string]interface{}) error {
-	modelValue := reflect.ValueOf(model)
-	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
-		return errors.New("model must be a pointer to a struct")
+	if err := utils.CheckModel(model, reflect.Struct); err != nil {
+		return err
 	}
 
 	query := config.DB
@@ -105,9 +100,8 @@ func SelectOne(model interface{}, conditions map[string]interface{}) error {
 }
 
 func Insert(model interface{}) error {
-	modelValue := reflect.ValueOf(model)
-	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
-		return errors.New("updateModel must be a pointer to a struct")
+	if err := utils.CheckModel(model, reflect.Struct); err != nil {
+		return err
 	}
 
 	start := time.Now()
@@ -127,6 +121,12 @@ func Insert(model interface{}) error {
 }
 
 func Update(model interface{}, updateModel map[string]interface{}, conditions map[string]interface{}) error {
+	utils.WriteLog("sdfsdfsdf", "ERROR")
+	if err := utils.CheckModel(model, reflect.Struct); err != nil {
+		utils.WriteLog("sdfsdfsdf", "ERROR")
+		return err
+	}
+
 	query := config.DB.Model(model)
 
 	for key, value := range conditions {
@@ -150,9 +150,8 @@ func Update(model interface{}, updateModel map[string]interface{}, conditions ma
 }
 
 func Delete(model interface{}, conditions map[string]interface{}) error {
-	modelValue := reflect.ValueOf(model)
-	if modelValue.Kind() != reflect.Ptr || modelValue.Elem().Kind() != reflect.Struct {
-		return errors.New("model must be a pointer to a slice")
+	if err := utils.CheckModel(model, reflect.Struct); err != nil {
+		return err
 	}
 
 	query := config.DB.Model(model)
