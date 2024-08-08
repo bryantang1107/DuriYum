@@ -6,11 +6,23 @@ import Button from "../components/Button";
 import Container from "../components/Container";
 import Row from "../components/Row";
 import Main from "../components/Main";
+import { useAuth } from "../context/AuthContext";
 
 const SignIn = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const handleSignIn = () => {};
+  const {firebaseUtil} = useAuth();
+  const handleSignIn =  async () => {
+    //normal login
+    if(emailRef.current && passwordRef.current){
+      await firebaseUtil.signIn(emailRef.current.value, passwordRef.current.value)
+    }
+  };
+
+  const loginWithGoogle =  async () =>{
+    //login with google
+    await firebaseUtil.signInWithGoogle()
+  }
   return (
     <Main>
       <Container isCenter={true}>
@@ -48,6 +60,8 @@ const SignIn = () => {
               className="rounded-full bg-gray-50 border border-red-200 p-2 mx-auto block mt-2"
             ></Button>
           </Form>
+          <Button label="LOGIN WITH GOOGLE" onClick={loginWithGoogle}>
+          </Button>
           <Container className="flex-col items-center">
             <p>
               Don't have an account ?

@@ -8,6 +8,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PrivateRoute from "./routes/PrivateRoutes";
 import Footer from "./components/Footer";
+import Error from "./components/Error";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
@@ -15,20 +16,24 @@ function App() {
   return (
     <div className="flex flex-col h-screen">
       <Router>
-        <Nav></Nav>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/signIn" element={<SignIn />}></Route>
-          <Route path="/signUp" element={<SignUp />}></Route>
-          {/* Private Routes */}
-          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
-            <Route path="/checkout" element={<Home />} />
-          </Route>
-        </Routes>
+        <div className="flex flex-col flex-grow">
+          <Nav></Nav>
+        </div>
+        <main className="flex-grow">
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/login" element={<SignIn />}></Route>
+            <Route path="/register" element={<SignUp />}></Route>
+            {/* Private Routes */}
+            <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
+              <Route path="/checkout" element={<Home />} />
+            </Route>
+            <Route path="*" element={<Error />}></Route>
+          </Routes>
+        </main>
         <Footer></Footer>
       </Router>
     </div>

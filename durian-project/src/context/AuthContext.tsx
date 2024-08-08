@@ -1,7 +1,7 @@
 import * as React from "react";
 import "firebase/compat/auth";
-import { FireBaseAuth } from "../firebase/firebaseUtil";
 import firebaseUtil from "../firebase/firebaseUtil";
+import { FireBaseAuth } from "../firebase/firebaseUtil";
 import { auth } from "../firebase/firebaseUtil";
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -19,6 +19,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   firebaseUtil: FireBaseAuth;
 }
+
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {

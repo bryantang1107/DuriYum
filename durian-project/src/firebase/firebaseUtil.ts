@@ -2,20 +2,22 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  //signOut,
+  // signOut,
   sendPasswordResetEmail,
   verifyBeforeUpdateEmail,
   updatePassword,
-  //  signInWithPopup,
+  signInWithPopup,
 } from "firebase/auth";
 import app from "./firebase";
-// import { GoogleAuthProvider } from "firebase/auth/web-extension";
+import { GoogleAuthProvider } from "firebase/auth/web-extension";
 
 export interface FireBaseAuth {
   signUp: (email: string, password: string) => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
   resetPassword: (email: string) => Promise<any>;
-  signInWithGoogle: (email: string) => Promise<any>;
+  updateUserEmail: (email: string, userInfo: any) => Promise<any>;
+  updateUserPassword: (password: string, userInfo: any) => Promise<any>;
+  signInWithGoogle: () => Promise<any>;
 }
 
 export const auth = getAuth(app);
@@ -39,12 +41,8 @@ const updateUserPassword = (password: string, userInfo: any) => {
   return updatePassword(userInfo, password);
 };
 
-const signInWithGoogle = async () => {
-  try {
-    //    const result = await signInWithPopup(auth, new GoogleAuthProvider());
-  } catch (error) {
-    //set error toast ?
-  }
+const signInWithGoogle = () => {
+  return signInWithPopup(auth, new GoogleAuthProvider());
 };
 
 const value = {
